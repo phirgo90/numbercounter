@@ -172,7 +172,10 @@ grid.appendChild(bullButton);
 
 function recordNumber(number) {
 
-    numbers.push(number);
+    numbers.push({
+        number: number,
+        timestamp: new Date().toISOString()
+    });
 
     save();
     updateDisplay();
