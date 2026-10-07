@@ -172,10 +172,7 @@ grid.appendChild(bullButton);
 
 function recordNumber(number) {
 
-    numbers.push({
-        number: number,
-        timestamp: new Date().toISOString()
-    });
+    numbers.push(number);
 
     save();
     updateDisplay();
@@ -231,7 +228,6 @@ function updateDisplay() {
 }
 
 function exportCSV() {
-
     if (numbers.length === 0) {
         alert("Nothing to export.");
         return;
@@ -252,7 +248,17 @@ function exportCSV() {
     const link = document.createElement("a");
 
     link.href = url;
-    link.download = "numbers.csv";
+
+    const now = new Date();
+    const timestamp =
+        now.getFullYear() + "-" +
+        String(now.getMonth() + 1).padStart(2, "0") + "-" +
+        String(now.getDate()).padStart(2, "0") + "_" +
+        String(now.getHours()).padStart(2, "0") + "-" +
+        String(now.getMinutes()).padStart(2, "0") + "-" +
+        String(now.getSeconds()).padStart(2, "0");
+
+    link.download = "numbers_" + timestamp + ".csv";
 
     link.click();
 
