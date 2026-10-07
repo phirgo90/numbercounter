@@ -1,1 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
+<title>Number Recorder</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        margin: 0;
+        padding: 15px;
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        color: #222;
+    }
+
+    .container {
+        max-width: 500px;
+        margin: auto;
+    }
+
+    h1 {
+        text-align: center;
+        margin: 5px 0 10px;
+        font-size: 26px;
+    }
+
+    #last {
+        text-align: center;
+        font-size: 22px;
+        margin-bottom: 15px;
+    }
+
+    #lastNumber {
+        font-weight: bold;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+    }
+
+    .number {
+        height: 65px;
+        border: none;
+        border-radius: 12px;
+        background: white;
+        font-size: 24px;
+        font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    }
+
+    .number:active {
+        transform: scale(0.94);
+        background: #ddd;
+    }
+
+    .info {
+        text-align: center;
+        margin: 18px 0 10px;
+        font-size: 18px;
+    }
+
+    .actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .action {
+        height: 55px;
+        border: none;
+        border-radius: 12px;
+        background: #333;
+        color: white;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .action:active {
+        transform: scale(0.96);
+        background: #555;
+    }
+
+    .export {
+        grid-column: 1 / -1;
+        background: #1677ff;
+    }
+
+    .history {
+        margin-top: 15px;
+        padding: 12px;
+        background: white;
+        border-radius: 12px;
+        min-height: 60px;
+        font-size: 18px;
+        line-height: 1.6;
+        word-wrap: break-word;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Number Recorder</h1>
+
+    <div id="last">
+        Last: <span id="lastNumber">—</span>
+    </div>
+
+    <div class="grid" id="numberGrid"></div>
+
+    <div class="info">
+        Recorded: <strong id="count">0</strong>
+    </div>
+
+    <div class="actions">
+        <button class="action" onclick="undo()">UNDO</button>
+        <button class="action" onclick="clearAll()">CLEAR</button>
+        <button class="action export" onclick="exportCSV()">EXPORT CSV</button>
+    </div>
+
+    <div class="history" id="history">
+        No numbers recorded yet.
+    </div>
+
+</div>
+
+<script>
+
+let numbers = JSON.parse(localStorage.getItem("numbers") || "[]");
+
+const grid = document.getElementById("numberGrid");
+
+// Create buttons 0–20
+for (let i = 0; i <= 20; i++) {
+
+    const button = document.createElement("button");
+
+    button.className = "number";
+    button.textContent = i;
+
+    button.onclick = function() {
+        recordNumber(i);
+    };
+
+    grid.appendChild(button);
+}
+
+function recordNumber(number) {
+
+    numbers.push(number);
+
+    save();
+    updateDisplay();
+}
+
+function undo() {
+
+    if (numbers.length === 0) return;
+
+    numbers.pop();
+
+    save();
+    updateDisplay();
+}
+
+function clearAll() {
+
+    if (numbers.length === 0) return;
+
+    if (confirm("Delete all recorded numbers?")) {
+
+        numbers = [];
+
+        save();
+        updateDisplay();
+    }
+}
+
+function save() {
+
+    localStorage.setItem("numbers", JSON.stringify(numbers));
+}
+
+function updateDisplay() {
+
+    document.getElementById("count").textContent = numbers.length;
+
+    if (numbers.length === 0) {
+
+        document.getElementById("lastNumber").textContent = "—";
+
+        document.getElementById("history").textContent =
+            "No numbers recorded yet.";
+
+        return;
+    }
+
+    document.getElementById("lastNumber").textContent =
+        numbers[numbers.length - 1];
+
+    document.getElementById("history").textContent =
+        numbers.join("  ");
+}
+
+function exportCSV() {
+
+    if (numbers.length === 0) {
+        alert("Nothing to export.");
+        return;
+    }
+
+    let csv = "Number\n";
+
+    numbers.forEach(number => {
+        csv += number + "\n";
+    });
+
+    const blob = new Blob([csv], {
+        type: "text/csv"
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "numbers.csv";
+
+    link.click();
+
+    URL.revokeObjectURL(url);
+}
+
+updateDisplay();
+
+</script>
+
+</body>
+</html>
