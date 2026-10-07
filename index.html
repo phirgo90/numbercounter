@@ -156,12 +156,16 @@ for (let i = 0; i <= 20; i++) {
     grid.appendChild(button);
 }
 
-   const bullButton = document.createElement("button");
+// Bullseye
+const bullButton = document.createElement("button");
+
 bullButton.className = "number";
 bullButton.textContent = "25";
+
 bullButton.onclick = function() {
     recordNumber(25);
 };
+
 grid.appendChild(bullButton);
 
    
