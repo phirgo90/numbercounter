@@ -197,6 +197,10 @@ function recordNumber(number) {
 
     save();
     updateDisplay();
+   
+   if (navigator.vibrate) {
+    navigator.vibrate(50);
+}
 }
 
 function undo() {
