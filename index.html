@@ -153,6 +153,15 @@ let numbers = JSON.parse(localStorage.getItem("numbers") || "[]");
 
 const grid = document.getElementById("numberGrid");
 
+function flashButton(button) {
+    button.classList.add("flash");
+
+    setTimeout(function() {
+        button.classList.remove("flash");
+    }, 100);
+}
+
+   
 // Create buttons 0–20
 for (let i = 1; i <= 20; i++) {
 
@@ -162,13 +171,9 @@ for (let i = 1; i <= 20; i++) {
     button.textContent = i;
 
    button.onclick = function() {
-    button.classList.add("flash");
-    setTimeout(function() {
-        button.classList.remove("flash");
-    }, 100);
-
+    flashButton(button);
     recordNumber(i);
-};
+   };
 
     grid.appendChild(button);
 }
@@ -180,6 +185,7 @@ bullButton.className = "number special";
 bullButton.textContent = "Bullseye";
 
 bullButton.onclick = function() {
+    flashButton(bullButton);
     recordNumber(25);
 };
 
@@ -197,6 +203,7 @@ nullButton.className = "number special";
 nullButton.textContent = "NULL";
 
 nullButton.onclick = function() {
+    flashButton(nullButton);
     recordNumber(0);
 };
 
